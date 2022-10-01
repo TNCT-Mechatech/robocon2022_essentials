@@ -14,6 +14,8 @@
   <buildtool_depend>catkin</buildtool_depend>
   <exec_depend>robocon2022_essentials_msg</exec_depend>
   <exec_depend>robocon2022_essentials_detection</exec_depend>
+  <exec_depend>robocon2022_essentials_serial</exec_depend>
+
 
   <export>
     <metapackage />

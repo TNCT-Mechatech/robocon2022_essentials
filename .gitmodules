@@ -1,0 +1,3 @@
+[submodule "robocon2022_essentials_serial/SerialBridge"]
+	path = robocon2022_essentials_serial/SerialBridge
+	url = https://github.com/TNCT-Mechatech/SerialBridge
