@@ -6,8 +6,9 @@ project(robocon2022_essentials_msgs)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  rospy
   std_msgs
+  geometry_msgs
+
   message_generation
 )
 
@@ -21,12 +22,17 @@ add_message_files(
 generate_messages(
   DEPENDENCIES
   std_msgs
+  geometry_msgs
 )
 
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES robocon2022_essentials_msgs
-  CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
+  CATKIN_DEPENDS
+    roscpp 
+    std_msgs 
+    geometry_msgs
+    message_runtime
 #  DEPENDS system_lib
 )
 
