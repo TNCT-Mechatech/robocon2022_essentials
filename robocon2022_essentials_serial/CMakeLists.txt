@@ -26,3 +26,9 @@ include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
 )
+
+add_executable(serial src/serial.cpp)
+target_link_libraries(serial ${catkin_LIBRARIES})
+
+target_link_libraries(serial ${CMAKE_CURRENT_SOURCE_DIR}/SerialBridge/bin/libSerialBridge.a)
+target_include_directories(serial PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/SerialBridge/src)
