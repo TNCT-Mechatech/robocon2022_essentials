@@ -26,8 +26,7 @@ Gesture gesture_msg;
 void callbackUserAction(const robocon2022_essentials_msgs::UserAction& userAction)
 {
   ROS_INFO("callback");
-
-  gesture_msg.data.type = userAction.action_id;
+  gesture_msg.data.type = userAction.action_id - 2;
   serial.write(MSG_ID);
 }
 
