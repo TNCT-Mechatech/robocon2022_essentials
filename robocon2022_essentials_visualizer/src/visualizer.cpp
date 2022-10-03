@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdio>
 #include <map>
+#include <string>
 
 #include <opencv2/opencv.hpp>
 #include <cv_bridge/cv_bridge.h>
@@ -144,9 +145,9 @@ public:
         // center_skeleton
         cv::Point center_rectangle[2];
         //  top and left
-        center_rectangle[0] = cv::Point(format_x(center_skeleton.joint_position_left_hand.x, 0.5), format_y(center_skeleton.joint_position_head.y - 0.1, 0.5));
+        center_rectangle[0] = cv::Point(format_x(center_skeleton.joint_position_right_hand.x, 0.5), format_y(center_skeleton.joint_position_head.y - 0.2, 0.5));
         //  bottom and right
-        center_rectangle[1] = cv::Point(format_x(center_skeleton.joint_position_right_hand.x, 0.5), format_y(center_skeleton.joint_position_spine_mid.y + 0.2, 0.5));
+        center_rectangle[1] = cv::Point(format_x(center_skeleton.joint_position_left_hand.x, 0.5), format_y(center_skeleton.joint_position_spine_mid.y + 0.2, 0.5));
 
         //  Color
         cv::Scalar human_color;
@@ -165,6 +166,28 @@ public:
           center_rectangle[1],
           human_color,
           3
+        );
+
+        //  draw user id        
+        cv::rectangle(
+          image,
+          center_rectangle[0],
+          cv::Point(center_rectangle[0].x + (MATRIX_ROW * 0.15) , center_rectangle[0].y - (0.045 * MATRIX_COL)),
+          human_color,
+          -1
+        );
+
+        cv::Scalar font_color = cv::Scalar(255, 0, 0);
+        std::string base_text("UserID: ");
+        std::string user_text = base_text + std::to_string(any_body.body_id);
+        cv::putText(
+          image,
+          user_text,
+          center_rectangle[0],
+          cv::FONT_HERSHEY_PLAIN,
+          1.5,
+          font_color,
+          2
         );
 
         ROS_INFO("DROW");
