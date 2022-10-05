@@ -85,6 +85,8 @@ public:
   void callback_user_action(const robocon2022_essentials_msgs::UserAction& msg)
   {
     ROS_INFO("get new UserAction");
+
+    throw_display_counter_ = 40;
   }
 
   //  Skeleton callback
@@ -133,7 +135,7 @@ public:
     {
       try
       {
-        ROS_INFO("Draw body id: %d", any_body.body_id);
+        // ROS_INFO("Draw body id: %d", any_body.body_id);
 
         auto finded_value = skeleton_map.find(any_body.body_id);
         if(finded_value == skeleton_map.end()) {
@@ -190,8 +192,6 @@ public:
           2
         );
 
-        ROS_INFO("DROW");
-
       } catch (std::out_of_range& oor)
       {
         ROS_INFO("Not found skelton");
@@ -200,7 +200,32 @@ public:
     }
     }
 
-    ROS_INFO("PUBLISH");
+    if (throw_display_counter_ > 0)
+    {
+      //  Display status of throwing
+      cv::rectangle(
+        image,
+        cv::Point(0.3*MATRIX_ROW, 0.1*MATRIX_COL),
+        cv::Point(0.7*MATRIX_ROW, 0.3*MATRIX_COL),
+        cv::Scalar(255, 255, 255),
+       -1
+      );
+
+      cv::putText(
+        image,
+        std::string("Throw!!"),
+        cv::Point(0.35*MATRIX_ROW, 0.25*MATRIX_COL),
+        cv::FONT_HERSHEY_PLAIN,
+        4.5,
+        cv::Scalar(0, 0, 0),
+        5
+      );
+
+      throw_display_counter_ --;
+    }
+    
+
+    // ROS_INFO("PUBLISH");
     //  convert
     sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
     //  publish image topic
@@ -260,16 +285,7 @@ private:
   //  BodyTrackerArray
   body_tracker_msgs::BodyTrackerArray last_body_tracker_array;
 
-  /**
-   * Skeleton with status
-   * status:
-   * 0 -> center
-   * 1 -> else
-   */
-  struct SkeletonStatus {
-    body_tracker_msgs::BodyTracker body_tracker;
-    int status;
-  };
+  int throw_display_counter_ = 0;
 
 };
 
