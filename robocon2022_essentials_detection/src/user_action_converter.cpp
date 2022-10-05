@@ -129,16 +129,20 @@ void callbackGestures(const body_tracker_msgs::Gestures& gestures)
   }
   */
 
+  ROS_INFO("\n\n\n\rCLOCK");
+
   /*
   1. 中央に近いユーザーをピック => x,y共に0に近い
   2. gestureとユーザーが一致するか確認
   */
   body_tracker_msgs::BodyTracker *best_body = nullptr;
+
   double min_distance = 100;
-  for (body_tracker_msgs::BodyTracker any_body : last_body_tracker_array.detected_list)
+  for (body_tracker_msgs::BodyTracker& any_body : last_body_tracker_array.detected_list)
   {
-    //  TODO  ここをxだけにするのもあり
-    double distance = sqrt(pow(any_body.position2d.x, 2.0) + pow(any_body.position2d.y, 2.0));
+    // double distance = sqrt(pow(any_body.position2d.x, 2.0) + pow(any_body.position2d.y, 2.0));
+    double distance = abs(any_body.position2d.x);
+
     if (distance < min_distance)
     {
       //  swap
@@ -146,22 +150,34 @@ void callbackGestures(const body_tracker_msgs::Gestures& gestures)
       min_distance = distance;
     }
   }
+
   //  break if null
   if (best_body == nullptr) {
     ROS_INFO("Skip GestureCallback due to NOT FOUND BODY");
     return;
   }
 
+  ROS_INFO("best id: %d distance:%7.4lf", best_body->body_id, min_distance);
+
   body_tracker_msgs::Gesture *best_gesture = nullptr;
   //  Gesture compare
   for(body_tracker_msgs::Gesture gesture : gestures.gestures)
   {
+    ROS_INFO("user: %d type: %d", gesture.user_id, gesture.type);
+
     if(gesture.user_id != best_body->body_id) {
       ROS_INFO("Skip (%d) due to different body", gesture.user_id);
       continue;
     }
     //  SWIP-UP,DOWN only
-    if (gesture.type == (int)GestureType::GESTURE_SWIPE_UP || gesture.type == (int)GestureType::GESTURE_SWIPE_DOWN)
+    // if (gesture.type == (int)GestureType::GESTURE_SWIPE_UP || gesture.type == (int)GestureType::GESTURE_SWIPE_DOWN)
+    // {
+    //   best_gesture = &gesture;
+    //   break;
+    // }
+    
+    //  SWIP-DOWN only
+    if (gesture.type == (int)GestureType::GESTURE_SWIPE_DOWN)
     {
       best_gesture = &gesture;
       break;
@@ -174,7 +190,11 @@ void callbackGestures(const body_tracker_msgs::Gestures& gestures)
   }
 
   //  publish
-  ROS_INFO("Found great gesture");
+  ROS_INFO(
+    "Found great gesture!\nuser id: %d\naction id: %d",
+      best_gesture->user_id,
+      best_gesture->type
+    );
 
   robocon2022_essentials_msgs::UserAction user_action;
   user_action.user_id = best_gesture->user_id;
