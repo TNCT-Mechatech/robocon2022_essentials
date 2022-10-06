@@ -24,6 +24,7 @@
 #define MATRIX_COL 480
 #define REALSENSE_D435_FOV_X 1.50098
 #define REALSENSE_D435_FOV_Y 0.994838
+#define MAXIMUM_DEPTH 2.5
 
 class visualizer_node
 {
@@ -217,6 +218,25 @@ public:
             2,
             depth_color,
             2
+          );
+
+          //  Depth Frame
+          cv::Scalar frame_color;
+          if(any_body.position2d.z <= MAXIMUM_DEPTH)
+          {
+            frame_color = cv::Scalar(0, 255, 0);
+          }
+          else
+          {
+            frame_color = cv::Scalar(255, 0, 0);
+          }
+          //  render
+          cv::rectangle(
+            image,
+            cv::Point(0, 0),
+            cv::Point(MATRIX_ROW * 1 , MATRIX_COL * 1),
+            frame_color,
+            14
           );
         }
       } catch (std::out_of_range& oor)
