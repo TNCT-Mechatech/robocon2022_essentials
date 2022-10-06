@@ -192,6 +192,33 @@ public:
           2
         );
 
+        if(any_body.body_id == center_body->body_id)
+        {
+          //  user depth
+          cv::Scalar depth_back_color = cv::Scalar(0, 255, 0);
+          cv::Scalar depth_color = cv::Scalar(0, 0, 0);
+          // std::string meter_text(" M");
+          // std::string depth_text = std::to_string(any_body.position2d.z) + meter_text;
+          std::ostringstream oss;
+          oss << std::fixed << std::setprecision(3) << any_body.position2d.z << " M";
+          std::string depth_text = oss.str();
+          cv::rectangle(
+            image,
+            cv::Point(0, 0),
+            cv::Point(MATRIX_ROW * 0.2 , MATRIX_COL * 0.1),
+            depth_back_color,
+            -1
+          );
+          cv::putText(
+            image,
+            depth_text,
+            cv::Point(MATRIX_ROW * 0.01, MATRIX_COL * 0.07),
+            cv::FONT_HERSHEY_PLAIN,
+            2,
+            depth_color,
+            2
+          );
+        }
       } catch (std::out_of_range& oor)
       {
         ROS_INFO("Not found skelton");
