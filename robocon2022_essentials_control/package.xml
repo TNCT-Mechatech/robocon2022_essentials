@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>robocon2022_essentials_control</name>
+  <version>0.0.0</version>
+  <description>The robocon2022_essentials_control package</description>
+
+  <maintainer email="mechatech.tnctrobo@gmail.com">TNCT-Mechatech</maintainer>
+  <author email="testusuke@gmail.com">testusuke</author>
+
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+
+  </export>
+</package>

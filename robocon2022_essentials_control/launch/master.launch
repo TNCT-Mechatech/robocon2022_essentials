@@ -1,0 +1,22 @@
+<launch>
+  <arg name="view" default="true" />
+
+  <!-- NuiTrack -->
+  <node pkg="nuitrack_body_tracker" type="nuitrack_body_tracker_node" name="nuitrack_body_tracker_node" output="screen">
+    <param name="camera_depth_frame" value="nuitrack_camera_link"/>
+    <param name="camera_color_frame" value="nuitrack_camera_link"/> 
+  </node>
+
+  <!-- Detection -->
+  <node name="essentials_detection" pkg="robocon2022_essentials_detection" type="user_action_converter" output="screen"/>
+
+  <!-- Visualizer -->
+  <node name="essentials_visualizer" pkg="robocon2022_essentials_visualizer" type="visualizer" output="screen"/>
+
+  <group if="$(arg view)" >
+    <!-- image view -->
+    <node name="image_view" pkg="image_view" type="image_view" output="screen">
+      <remap from="image" to="/essentials_visualizer/color/image/" />
+    </node>
+  </group>
+</launch>
