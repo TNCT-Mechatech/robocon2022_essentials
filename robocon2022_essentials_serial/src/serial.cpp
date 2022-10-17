@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 #include "std_msgs/String.h"
 #include "std_msgs/Int32.h"
+#include "std_msgs/Float32.h"
 
 #include <iostream>
 #include <string.h>
@@ -16,16 +17,19 @@
 #include <LinuxHardwareSerial.hpp>
 #include "./Gesture.h"
 #include "./DebugMessage.h"
+#include "./ThrowGain.h"
 
 #define SERIAL_PATH "/dev/serial/by-path/pci-0000:00:14.0-usb-0:4:1.2"
 #define MSG_ID 10
 #define DEBUG_MSG_ID 15
+#define GAIN_MSG_ID 20
 
 SerialDev *dev = new LinuxHardwareSerial(SERIAL_PATH, B9600);
 SerialBridge serial(dev, 1024);
 
 Gesture gesture_msg;
 DebugMessage debug_msg;
+ThrowGain gain_msg;
 
 void callbackUserAction(const robocon2022_essentials_msgs::UserAction& userAction)
 {
@@ -43,11 +47,13 @@ int main(int argc, char** argv)
   //  SerialBridge
   serial.add_frame(MSG_ID, &gesture_msg);
   serial.add_frame(DEBUG_MSG_ID, &debug_msg);
+  serial.add_frame(GAIN_MSG_ID, &gain_msg);
 
   //  subscriber
   ros::Subscriber user_action_sub_ = nh.subscribe("/essentials_detection/user_action", 10, callbackUserAction);
   //  publisher
   ros::Publisher debug_pub = nh.advertise<std_msgs::String>("/essentials_serial/debug", 1000);
+  ros::Publisher gain_pub = nh.advertise<std_msgs::Float32>("/essentials_serial/gain", 1000);
 
   while(ros::ok())
   {
@@ -58,6 +64,13 @@ int main(int argc, char** argv)
         std_msgs::String msg;
         msg.data = std::string(debug_msg.data.str);
         debug_pub.publish(msg);
+      }
+
+      if(gain_msg.was_updated())
+      {
+        std_msgs::Float32 msg;
+        msg.data = gain_msg.data.gain;
+        gain_pub.publish(msg);
       }
     }
 
