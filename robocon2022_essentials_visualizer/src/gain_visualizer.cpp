@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <opencv2/opencv.hpp>
-#include <opencv2/core/core.hpp>
 #include <cv_bridge/cv_bridge.h>
 
 //	Message
@@ -83,7 +82,7 @@ public:
      * l |
      *   _
      */
-    cv::Mat image(MATRIX_ROW, MATRIX_COL, CV_64FC(10));
+    cv::Mat image(MATRIX_ROW, MATRIX_COL, CV_64FC(3));
 
     //  background color
     image = cv::Scalar(255, 255, 255);
