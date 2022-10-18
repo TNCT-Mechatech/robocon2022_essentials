@@ -4,10 +4,17 @@
   <!-- Serial -->
   <node name="essentials_serial" pkg="robocon2022_essentials_serial" type="serial" output="screen"/>
 
+  <!-- Visualizer -->
+  <node name="essentials_gain_visualizer" pkg="robocon2022_essentials_visualizer" type="gain_visualizer" output="screen"/>
+
   <group if="$(arg view)" >
-    <!-- image view -->
-    <node name="slave_image_view" pkg="image_view" type="image_view" output="screen" ns="master_image_view">
+    <!-- image view
+    <node name="slave_image_view" pkg="image_view" type="image_view" output="screen" ns="slave_image_view">
       <remap from="image" to="/essentials_visualizer/color/image/" />
+    </node> -->
+
+    <node name="gain_image_view" pkg="image_view" type="image_view" output="screen" ns="slave_gain_image_view">
+      <remap from="image" to="/essentials_gain_visualizer/color/image/" />
     </node>
   </group>
 </launch>
