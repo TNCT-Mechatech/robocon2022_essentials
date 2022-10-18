@@ -48,3 +48,9 @@ target_link_libraries(visualizer
   ${OpenCV_LIBRARIES}
 )
 
+add_executable(gain_visualizer src/gain_visualizer.cpp)
+target_link_libraries(gain_visualizer
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
+
