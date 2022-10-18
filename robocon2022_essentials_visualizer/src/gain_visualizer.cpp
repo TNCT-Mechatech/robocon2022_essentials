@@ -13,8 +13,8 @@
 //  publisher
 #include <image_transport/image_transport.h>
 
-#define MATRIX_ROW 1024
-#define MATRIX_COL 600
+#define MATRIX_COL 1024
+#define MATRIX_ROW 600
 
 
 template <typename ... Args>
@@ -82,7 +82,7 @@ public:
      * l |
      *   _
      */
-    cv::Mat image(MATRIX_ROW, MATRIX_COL, CV_64FC(3));
+    cv::Mat image(MATRIX_ROW, MATRIX_COL, CV_8UC(3));
 
     //  background color
     image = cv::Scalar(255, 255, 255);
@@ -93,11 +93,11 @@ public:
     cv::putText(
       image,
       text,
-      cv::Point(100, 200),
+      cv::Point(80, 400),
       cv::FONT_HERSHEY_PLAIN,
-      10,
+      20,
       font_color,
-      2
+      13
     );
 
     //  convert
