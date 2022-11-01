@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+  <head>
+    <title>ROS Image Web Viewer</title>  
+    <style>
+    *{
+      margin: 0px;
+      padding: 0px;
+      border: 0px;
+    }
+    .full_picture{
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
+    }
+    </style>
+  </head>
+
+  <body>
+    <h1>Visualizer</h1>
+    <!-- <script>
+      document.write("<img src='http://" + location.hostname + ":8080/stream_viewer?topic=/essentials_visualizer/color/image'></img>");
+    </script> -->
+    <script>
+      var image_topic = "/essentials_visualizer/color/image";
+      document.write("<img class='full_picture' src='http://"+location.hostname +":8080/stream?topic=" + image_topic + "'></img>");
+    </script>
+ </body>
+</html>

@@ -1,5 +1,6 @@
 <launch>
   <arg name="view" default="true" />
+  <arg name="web" default="true" />
 
   <!-- NuiTrack -->
   <node pkg="nuitrack_body_tracker" type="nuitrack_body_tracker_node" name="nuitrack_body_tracker_node" output="screen">
@@ -19,5 +20,13 @@
       <remap from="image" to="/essentials_visualizer/color/image/" />
       <!-- <param name="autosize" value="true"/> -->
     </node>
+  </group>
+
+  <group if="$(arg web)" >
+    <!-- visualizer view -->
+    <include file="$(find roswww)/launch/roswww.launch">
+      <arg name="port" value="3000" />
+    </include>
+    <node pkg="web_video_server" type="web_video_server" name="web_visualizer" />
   </group>
 </launch>
