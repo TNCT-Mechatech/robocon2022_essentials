@@ -17,6 +17,7 @@
   <exec_depend>robocon2022_essentials_serial</exec_depend>
   <exec_depend>robocon2022_essentials_visualizer</exec_depend>
   <exec_depend>robocon2022_essentials_control</exec_depend>
+  <exec_depend>robocon2022_essentials_controller</exec_depend>
 
 
   <export>

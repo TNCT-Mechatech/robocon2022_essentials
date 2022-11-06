@@ -19,17 +19,26 @@
 #include "./DebugMessage.h"
 #include "./ThrowGain.h"
 
+#include "./Controller.hpp"
+#include "./MovementFeedback.hpp"
+
 #define SERIAL_PATH "/dev/serial/by-path/pci-0000:00:14.0-usb-0:4:1.2"
 #define MSG_ID 10
 #define DEBUG_MSG_ID 15
 #define GAIN_MSG_ID 20
 
-SerialDev *dev = new LinuxHardwareSerial(SERIAL_PATH, B9600);
+#define CONTROLLER_TX_ID 0
+#define FEEDBACK_RX_ID 1
+
+SerialDev *dev = new LinuxHardwareSerial(SERIAL_PATH, B115200);
 SerialBridge serial(dev, 1024);
 
 Gesture gesture_msg;
 DebugMessage debug_msg;
 ThrowGain gain_msg;
+
+Controller controller_msg;
+// MovementFeedback movement_feedback_msg;
 
 void callbackUserAction(const robocon2022_essentials_msgs::UserAction& userAction)
 {
@@ -45,12 +54,22 @@ int main(int argc, char** argv)
   ros::Rate loop_rate(50);
 
   //  SerialBridge
-  serial.add_frame(MSG_ID, &gesture_msg);
-  serial.add_frame(DEBUG_MSG_ID, &debug_msg);
-  serial.add_frame(GAIN_MSG_ID, &gain_msg);
+  // serial.add_frame(MSG_ID, &gesture_msg);
+  // serial.add_frame(DEBUG_MSG_ID, &debug_msg);
+  // serial.add_frame(GAIN_MSG_ID, &gain_msg);
+  serial.add_frame(CONTROLLER_TX_ID, &controller_msg);
+
+  controller_msg.data.movement.x = 0.0;
+  controller_msg.data.movement.y = 0.0;
+  controller_msg.data.movement.z = 0.8;
+  controller_msg.data.all_reload = true;
+  controller_msg.data.shooter.num = 11;
+  controller_msg.data.shooter.power = 0.1234;
+  controller_msg.data.shooter.action = 2;
+
 
   //  subscriber
-  ros::Subscriber user_action_sub_ = nh.subscribe("/essentials_detection/user_action", 10, callbackUserAction);
+  // ros::Subscriber user_action_sub_ = nh.subscribe("/essentials_detection/user_action", 10, callbackUserAction);
   //  publisher
   ros::Publisher debug_pub = nh.advertise<std_msgs::String>("/essentials_serial/debug", 1000);
   ros::Publisher gain_pub = nh.advertise<std_msgs::Float32>("/essentials_serial/gain", 1000);
@@ -73,6 +92,9 @@ int main(int argc, char** argv)
         gain_pub.publish(msg);
       }
     }
+
+    //  SEND DEBUG
+    serial.write(CONTROLLER_TX_ID);
 
     ros::spinOnce();
     loop_rate.sleep();
