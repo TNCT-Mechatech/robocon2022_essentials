@@ -73,19 +73,6 @@ public:
     // ROS_INFO("subscribed joy");
     _need_publish = false;
 
-    /**
-    Publishするタイミング
-    Controller.shooter_action,shooter_num,movement_modeが変わったタイミングと20Hz間隔でpublish
-    
-    
-    Intrruptなボタン
-    Power調整ボタン(十字キー 上下)
-    射出機構の切り替え R1
-    射出 R2
-    全装填 四角ボタン
-    移動速度変更 円ボタン
-    */
-
     //  init message
     controller_msg.all_reload = false;
     controller_msg.shooter_action = 0;
