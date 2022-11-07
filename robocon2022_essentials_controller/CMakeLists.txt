@@ -8,12 +8,17 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
   std_msgs
+  robocon2022_essentials_msgs
 )
 
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES robocon2022_essentials_controller
-  CATKIN_DEPENDS roscpp sensor_msgs std_msgs
+  CATKIN_DEPENDS 
+    roscpp
+    sensor_msgs 
+    std_msgs
+    robocon2022_essentials_msgs
 #  DEPENDS system_lib
 )
 include_directories(
