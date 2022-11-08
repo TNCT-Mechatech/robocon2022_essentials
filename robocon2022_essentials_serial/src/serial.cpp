@@ -11,40 +11,48 @@
 //	Message
 #include <geometry_msgs/Point32.h>
 #include <robocon2022_essentials_msgs/UserAction.h>
+#include <robocon2022_essentials_msgs/Controller.h>
 
 //  SerialBridge
 #include <SerialBridge.hpp>
 #include <LinuxHardwareSerial.hpp>
-#include "./Gesture.h"
-#include "./DebugMessage.h"
-#include "./ThrowGain.h"
 
+#include "./Gesture.h"
 #include "./Controller.hpp"
 #include "./MovementFeedback.hpp"
 
 #define SERIAL_PATH "/dev/serial/by-path/pci-0000:00:14.0-usb-0:4:1.2"
-#define MSG_ID 10
-#define DEBUG_MSG_ID 15
-#define GAIN_MSG_ID 20
 
-#define CONTROLLER_TX_ID 0
-#define FEEDBACK_RX_ID 1
+#define CONTROLLER_ID 0
+#define GESTURE_ID 1
+#define MOVEMENT_FEEDBACK_ID 5
 
 SerialDev *dev = new LinuxHardwareSerial(SERIAL_PATH, B115200);
 SerialBridge serial(dev, 1024);
 
 Gesture gesture_msg;
-DebugMessage debug_msg;
-ThrowGain gain_msg;
-
+// DebugMessage debug_msg;
 Controller controller_msg;
-// MovementFeedback movement_feedback_msg;
+MovementFeedback movement_feedback_msg;
 
 void callbackUserAction(const robocon2022_essentials_msgs::UserAction& userAction)
 {
-  ROS_INFO("callback");
   gesture_msg.data.type = userAction.action_id - 2;
-  serial.write(MSG_ID);
+  serial.write(GESTURE_ID);
+}
+
+void callbackController(const robocon2022_essentials_msgs::Controller& msg)
+{
+  controller_msg.data.movement_mode = (int8_t)msg.movement_mode;
+  controller_msg.data.movement.x = msg.movement_vel.linear.x;
+  controller_msg.data.movement.y = msg.movement_vel.linear.y;
+  controller_msg.data.movement.z = msg.movement_vel.angular.z;
+  controller_msg.data.all_reload = msg.all_reload;
+  controller_msg.data.shooter.num = (int8_t)msg.shooter_num;
+  controller_msg.data.shooter.power = msg.shooter_power;
+  controller_msg.data.shooter.action = (int8_t)msg.shooter_action;
+
+  serial.write(CONTROLLER_ID);
 }
 
 int main(int argc, char** argv)
@@ -54,47 +62,22 @@ int main(int argc, char** argv)
   ros::Rate loop_rate(50);
 
   //  SerialBridge
-  // serial.add_frame(MSG_ID, &gesture_msg);
-  // serial.add_frame(DEBUG_MSG_ID, &debug_msg);
-  // serial.add_frame(GAIN_MSG_ID, &gain_msg);
-  serial.add_frame(CONTROLLER_TX_ID, &controller_msg);
-
-  controller_msg.data.movement.x = 0.0;
-  controller_msg.data.movement.y = 0.0;
-  controller_msg.data.movement.z = 0.8;
-  controller_msg.data.all_reload = true;
-  controller_msg.data.shooter.num = 11;
-  controller_msg.data.shooter.power = 0.1234;
-  controller_msg.data.shooter.action = 2;
-
+  serial.add_frame(GESTURE_ID, &gesture_msg);
+  serial.add_frame(CONTROLLER_ID, &controller_msg);
+  serial.add_frame(MOVEMENT_FEEDBACK_ID, &movement_feedback_msg);
 
   //  subscriber
-  // ros::Subscriber user_action_sub_ = nh.subscribe("/essentials_detection/user_action", 10, callbackUserAction);
-  //  publisher
-  ros::Publisher debug_pub = nh.advertise<std_msgs::String>("/essentials_serial/debug", 1000);
-  ros::Publisher gain_pub = nh.advertise<std_msgs::Float32>("/essentials_serial/gain", 1000);
+  ros::Subscriber user_action_sub_ = nh.subscribe("/essentials_detection/user_action", 10, callbackUserAction);
+  ros::Subscriber controller_sub_ = nh.subscribe("/essentials_controller/controller", 10, callbackController);
 
   while(ros::ok())
   {
     if(serial.update() == 0)
     {
-      if(debug_msg.was_updated())
+      if(movement_feedback_msg.was_updated())
       {
-        std_msgs::String msg;
-        msg.data = std::string(debug_msg.data.str);
-        debug_pub.publish(msg);
-      }
-
-      if(gain_msg.was_updated())
-      {
-        std_msgs::Float32 msg;
-        msg.data = gain_msg.data.gain;
-        gain_pub.publish(msg);
       }
     }
-
-    //  SEND DEBUG
-    serial.write(CONTROLLER_TX_ID);
 
     ros::spinOnce();
     loop_rate.sleep();
