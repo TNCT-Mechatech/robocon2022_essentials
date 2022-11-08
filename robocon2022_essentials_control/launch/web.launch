@@ -1,0 +1,7 @@
+<launch>
+  <!-- visualizer view -->
+  <include file="$(find roswww)/launch/roswww.launch">
+    <arg name="port" value="3000" />
+  </include>
+  <node pkg="web_video_server" type="web_video_server" name="web_visualizer" />
+</launch>
