@@ -20,18 +20,20 @@
 #include "./Gesture.h"
 #include "./Controller.hpp"
 #include "./MovementFeedback.hpp"
+#include "./DebugMessage.h"
 
 #define SERIAL_PATH "/dev/serial/by-path/pci-0000:00:14.0-usb-0:4:1.2"
 
 #define CONTROLLER_ID 0
 #define GESTURE_ID 1
 #define MOVEMENT_FEEDBACK_ID 5
+#define DEBUG_ID 6
 
 SerialDev *dev = new LinuxHardwareSerial(SERIAL_PATH, B115200);
 SerialBridge serial(dev, 1024);
 
 Gesture gesture_msg;
-// DebugMessage debug_msg;
+DebugMessage debug_msg;
 Controller controller_msg;
 MovementFeedback movement_feedback_msg;
 
@@ -65,15 +67,25 @@ int main(int argc, char** argv)
   serial.add_frame(GESTURE_ID, &gesture_msg);
   serial.add_frame(CONTROLLER_ID, &controller_msg);
   serial.add_frame(MOVEMENT_FEEDBACK_ID, &movement_feedback_msg);
+  serial.add_frame(DEBUG_ID, &debug_msg);
 
   //  subscriber
   ros::Subscriber user_action_sub_ = nh.subscribe("/essentials_detection/user_action", 10, callbackUserAction);
   ros::Subscriber controller_sub_ = nh.subscribe("/essentials_controller/controller", 10, callbackController);
+  //  Publisher
+  ros::Publisher debug_pub = nh.advertise<std_msgs::String>("/essentials_serial/debug", 1000);
 
   while(ros::ok())
   {
     if(serial.update() == 0)
     {
+      if(debug_msg.was_updated())
+      {
+        std_msgs::String msg;
+        msg.data = std::string(debug_msg.data.str);
+        debug_pub.publish(msg);
+      }
+
       if(movement_feedback_msg.was_updated())
       {
       }

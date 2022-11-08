@@ -17,6 +17,7 @@ add_message_files(
   FILES
   UserAction.msg
   Controller.msg
+  Wheel4.msg
 )
 
 ## Generate added messages and services with any dependencies listed here
