@@ -198,9 +198,9 @@ public:
   void convert_native_controller(const sensor_msgs::Joy msg)
   {
     //  joystic
-    _present_controller.x = msg.axes[0];
+    _present_controller.x = -1 * msg.axes[0];
     _present_controller.y = msg.axes[1];
-    _present_controller.theta = msg.axes[2];
+    _present_controller.theta = -1 * msg.axes[2];
     //  Left cross buttons
     _present_controller.lc_up = msg.axes[10] >= 1.0 ? true : false;
     _present_controller.lc_down = msg.axes[10] <= -1.0 ? true : false;
