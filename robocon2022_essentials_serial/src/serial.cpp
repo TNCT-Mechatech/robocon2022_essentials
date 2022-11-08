@@ -45,6 +45,8 @@ void callbackUserAction(const robocon2022_essentials_msgs::UserAction& userActio
 
 void callbackController(const robocon2022_essentials_msgs::Controller& msg)
 {
+  ROS_INFO("controller callback");
+
   controller_msg.data.movement_mode = (int8_t)msg.movement_mode;
   controller_msg.data.movement.x = msg.movement_vel.linear.x;
   controller_msg.data.movement.y = msg.movement_vel.linear.y;
