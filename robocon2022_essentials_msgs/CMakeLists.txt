@@ -17,6 +17,7 @@ add_message_files(
   FILES
   UserAction.msg
   Controller.msg
+  Vector4.msg
   Wheel4.msg
 )
 

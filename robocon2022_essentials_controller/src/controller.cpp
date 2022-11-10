@@ -219,32 +219,6 @@ public:
     _present_controller.rb_2 = msg.buttons[7];
   }
 
-  bool compare_native_controller_state()
-  {
-    return (
-      //  Movement velocity
-      _previous_controller.x == _present_controller.x
-      && _previous_controller.y == _present_controller.y
-      && _previous_controller.theta == _present_controller.theta
-      //  Left cross
-      && _previous_controller.lc_up == _present_controller.lc_up
-      && _previous_controller.lc_down == _present_controller.lc_down
-      && _previous_controller.lc_left == _present_controller.lc_left
-      && _previous_controller.lc_right == _present_controller.lc_right
-      //  Right cross
-      && _previous_controller.rc_up == _present_controller.rc_up
-      && _previous_controller.rc_down == _present_controller.rc_down
-      && _previous_controller.rc_left == _present_controller.rc_left
-      && _previous_controller.rc_right == _present_controller.rc_right
-      //  Left buttons
-      && _previous_controller.lb_1 == _present_controller.lb_1
-      && _previous_controller.lb_2 == _present_controller.lb_2
-      //  Right buttons
-      && _previous_controller.rb_1 == _present_controller.rb_1
-      && _previous_controller.rb_2 == _present_controller.rb_2
-    );
-  }
-
 private:
 
   /////////////////////////

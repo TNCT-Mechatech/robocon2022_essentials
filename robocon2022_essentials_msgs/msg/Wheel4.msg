@@ -1,6 +1,4 @@
 Header header
 
-float32 w1
-float32 w2
-float32 w3
-float32 w4
+Vector4 target
+Vector4 present

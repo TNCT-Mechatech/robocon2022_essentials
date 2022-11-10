@@ -12,6 +12,7 @@
 #include <geometry_msgs/Point32.h>
 #include <robocon2022_essentials_msgs/UserAction.h>
 #include <robocon2022_essentials_msgs/Controller.h>
+#include <robocon2022_essentials_msgs/Wheel4.h>
 
 //  SerialBridge
 #include <SerialBridge.hpp>
@@ -22,7 +23,7 @@
 #include "./MovementFeedback.hpp"
 #include "./DebugMessage.h"
 
-#define SERIAL_PATH "/dev/serial/by-path/pci-0000:00:14.0-usb-0:4:1.2"
+#define SERIAL_PATH "/dev/serial/by-path/pci-0000:00:44.0-usb-0:4:1.2"
 
 #define CONTROLLER_ID 0
 #define GESTURE_ID 1
@@ -74,6 +75,7 @@ int main(int argc, char** argv)
   ros::Subscriber controller_sub_ = nh.subscribe("/essentials_controller/controller", 10, callbackController);
   //  Publisher
   ros::Publisher debug_pub = nh.advertise<std_msgs::String>("/essentials_serial/debug", 1000);
+  ros::Publisher movenet_feedback_pub = nh.advertise<robocon2022_essentials_msgs::Wheel4>("/essentials_serial/feedback", 1000);
 
   while(ros::ok())
   {
@@ -88,6 +90,18 @@ int main(int argc, char** argv)
 
       if(movement_feedback_msg.was_updated())
       {
+        robocon2022_essentials_msgs::Wheel4 msg;
+        msg.target.v1 = movement_feedback_msg.data.target.v1;
+        msg.target.v2 = movement_feedback_msg.data.target.v2;
+        msg.target.v3 = movement_feedback_msg.data.target.v3;
+        msg.target.v4 = movement_feedback_msg.data.target.v4;
+
+        msg.present.v1 = movement_feedback_msg.data.output.v1;
+        msg.present.v2 = movement_feedback_msg.data.output.v2;
+        msg.present.v3 = movement_feedback_msg.data.output.v3;
+        msg.present.v4 = movement_feedback_msg.data.output.v4;
+
+        movenet_feedback_pub.publish(msg);
       }
     }
 
