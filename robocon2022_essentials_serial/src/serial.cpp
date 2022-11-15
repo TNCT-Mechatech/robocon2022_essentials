@@ -23,7 +23,7 @@
 #include "./MovementFeedback.hpp"
 #include "./DebugMessage.h"
 
-#define SERIAL_PATH "/dev/serial/by-path/pci-0000:00:44.0-usb-0:4:1.2"
+#define SERIAL_PATH "/dev/serial/by-path/pci-0000:00:14.0-usb-0:4:1.2"
 
 #define CONTROLLER_ID 0
 #define GESTURE_ID 1
