@@ -2,7 +2,9 @@
   <arg name="view" default="true" />
 
   <!-- Dualshock 4 -->
-  <node name="essentials_controller_joy" pkg="joy" type="joy_node" output="screen"/>
+  <node name="essentials_controller_joy" pkg="joy" type="joy_node" output="screen">
+    <param name="autorepeat_rate" value="30"/>
+  </node>
 
   <!-- Controller -->
   <node name="essentials_controller" pkg="robocon2022_essentials_controller" type="controller" output="screen"/>

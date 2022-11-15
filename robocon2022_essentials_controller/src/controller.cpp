@@ -202,15 +202,15 @@ public:
     _present_controller.y = msg.axes[1];
     _present_controller.theta = -1 * msg.axes[2];
     //  Left cross buttons
-    _present_controller.lc_up = msg.axes[10] >= 1.0 ? true : false;
-    _present_controller.lc_down = msg.axes[10] <= -1.0 ? true : false;
-    _present_controller.lc_left = msg.axes[9] >= 1.0 ? true : false;
-    _present_controller.lc_right = msg.axes[9] <= -1.0 ? true : false;
+    _present_controller.lc_up = msg.axes[7] >= 1.0 ? true : false;
+    _present_controller.lc_down = msg.axes[7] <= -1.0 ? true : false;
+    _present_controller.lc_left = msg.axes[6] >= 1.0 ? true : false;
+    _present_controller.lc_right = msg.axes[6] <= -1.0 ? true : false;
     //  Right cross buttons
-    _present_controller.rc_up = msg.buttons[3];
-    _present_controller.rc_down = msg.buttons[1];
-    _present_controller.rc_left = msg.buttons[0];
-    _present_controller.rc_right = msg.buttons[2];
+    _present_controller.rc_up = msg.buttons[2];
+    _present_controller.rc_down = msg.buttons[0];
+    _present_controller.rc_left = msg.buttons[3];
+    _present_controller.rc_right = msg.buttons[1];
     //  Left button
     _present_controller.lb_1 = msg.buttons[4];
     _present_controller.lb_2 = msg.buttons[6];
