@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 
 #include <sensor_msgs/Joy.h>
+#include <std_msgs/Bool.h>
 #include <robocon2022_essentials_msgs/Controller.h>
 
 using robocon2022_essentials_msgs::Controller;
@@ -23,8 +24,12 @@ public:
     //  init variable
     init_native_controller();
 
+    _emergency_switch = false;
+
     //  subscriber
     ros::Subscriber joy_sub_ = pnh.subscribe("/joy", 10, &joy_controller_node::callbackJoy, this);
+    ros::Subscriber emergency_sub_ = pnh.subscribe("/essentials_controller/emergency", 10, &joy_controller_node::callbackEmergency, this);
+
 
     //  publisher
     controller_pub = pnh.advertise<Controller>("/essentials_controller/controller", 1000);
@@ -68,6 +73,11 @@ public:
 
   }
 
+  void callbackEmergency(const std_msgs::Bool& msg)
+  {
+    _emergency_switch = msg.data;
+  }
+
   void callbackJoy(const sensor_msgs::Joy& msg)
   {
     // ROS_INFO("subscribed joy");
@@ -76,6 +86,9 @@ public:
     //  init message
     controller_msg.all_reload = false;
     controller_msg.shooter_action = 0;
+
+    //  emergency
+    controller_msg.emergency_switch = _emergency_switch;
 
     //  convert into native controller type
     convert_native_controller(msg);
@@ -200,17 +213,17 @@ public:
     //  joystic
     _present_controller.x = -1 * msg.axes[0];
     _present_controller.y = msg.axes[1];
-    _present_controller.theta = -1 * msg.axes[2];
+    _present_controller.theta = -1 * msg.axes[3];
     //  Left cross buttons
-    _present_controller.lc_up = msg.axes[10] >= 1.0 ? true : false;
-    _present_controller.lc_down = msg.axes[10] <= -1.0 ? true : false;
-    _present_controller.lc_left = msg.axes[9] >= 1.0 ? true : false;
-    _present_controller.lc_right = msg.axes[9] <= -1.0 ? true : false;
+    _present_controller.lc_up = msg.axes[7] >= 1.0 ? true : false;
+    _present_controller.lc_down = msg.axes[7] <= -1.0 ? true : false;
+    _present_controller.lc_left = msg.axes[6] >= 1.0 ? true : false;
+    _present_controller.lc_right = msg.axes[6] <= -1.0 ? true : false;
     //  Right cross buttons
-    _present_controller.rc_up = msg.buttons[3];
-    _present_controller.rc_down = msg.buttons[1];
-    _present_controller.rc_left = msg.buttons[0];
-    _present_controller.rc_right = msg.buttons[2];
+    _present_controller.rc_up = msg.buttons[2];
+    _present_controller.rc_down = msg.buttons[0];
+    _present_controller.rc_left = msg.buttons[3];
+    _present_controller.rc_right = msg.buttons[1];
     //  Left button
     _present_controller.lb_1 = msg.buttons[4];
     _present_controller.lb_2 = msg.buttons[6];
@@ -265,6 +278,9 @@ private:
 
   //  publish flag
   bool _need_publish;
+
+  //  emergency switch
+  bool _emergency_switch;
 
   //  Publish message
   Controller controller_msg;

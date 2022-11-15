@@ -28,3 +28,12 @@ include_directories(
 
 add_executable(controller src/controller.cpp)
 target_link_libraries(controller ${catkin_LIBRARIES})
+
+add_executable(emergency src/emergency.cpp)
+
+EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
+if (${ARCHITECTURE} MATCHES "arm")
+    target_link_libraries(emergency ${catkin_LIBRARIES} -lwiringPi)
+else()
+    target_link_libraries(emergency ${catkin_LIBRARIES})
+endif()

@@ -1,6 +1,10 @@
 Header header
 
 ###########################
+# Emergency Stop
+bool emergency_switch
+
+###########################
 # Movement
 # movement mode: 0-speedy, 1-normal, 2-slow
 int32 movement_mode

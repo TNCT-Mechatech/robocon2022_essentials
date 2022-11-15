@@ -18,6 +18,7 @@
 
 using robocon2022_essentials_msgs::Controller;
 
+/*
 template <typename ... Args>
 std::string format(const std::string& fmt, Args ... args )
 {
@@ -26,6 +27,7 @@ std::string format(const std::string& fmt, Args ... args )
     std::snprintf(&buf[0], len + 1, fmt.c_str(), args ... );
     return std::string(&buf[0], &buf[0] + len);
 }
+*/
 
 class controller_visualizer_node
 {
@@ -107,6 +109,7 @@ public:
       1
     );
 
+    /*
     //  Movement
     put_text(
       image,
@@ -126,17 +129,42 @@ public:
       black_color,
       4
     );
+    */
 
     //  Shooter
+    std::string shooter_selected("Shooter: ");
+    if(controller_msg.shooter_num == 0)
+    {
+      shooter_selected += std::string("Child");
+    }
+    else if(controller_msg.shooter_num == 1)
+    {
+      shooter_selected += std::string("Parent RIGHT");
+    }
+    else if(controller_msg.shooter_num == 2)
+    {
+      shooter_selected += std::string("Parent LEFT");
+    }
+
     put_text(
       image,
-      format("shooter: %d", controller_msg.shooter_num),
+      shooter_selected,
       black_color,
       6
     );
+
+    //  Power
+    char cpower[15];
+    memset(cpower, 0, 15);
+    sprintf(
+      cpower,
+      "Power:%3.1lf%%",
+      controller_msg.shooter_power * 100
+    );
+
     put_text(
       image,
-      format("Power:%5.1lf%", controller_msg.shooter_power * 100),
+      std::string(cpower),
       black_color,
       7
     );

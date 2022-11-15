@@ -19,6 +19,7 @@ add_message_files(
   Controller.msg
   Vector4.msg
   Wheel4.msg
+  EmeregencyStop.msg
 )
 
 ## Generate added messages and services with any dependencies listed here
