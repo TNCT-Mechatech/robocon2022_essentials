@@ -6,6 +6,7 @@
 
 typedef struct ControllerType
 {
+    bool emergency_switch;
     //  movement mode
     int8_t movement_mode;
     //  include vector-x,y,theta

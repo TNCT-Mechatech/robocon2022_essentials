@@ -29,6 +29,8 @@
 #define GESTURE_ID 1
 #define MOVEMENT_FEEDBACK_ID 5
 #define DEBUG_ID 6
+#define CONTROLLER_PUB_ID 7
+
 
 SerialDev *dev = new LinuxHardwareSerial(SERIAL_PATH, B115200);
 SerialBridge serial(dev, 1024);
@@ -36,6 +38,7 @@ SerialBridge serial(dev, 1024);
 Gesture gesture_msg;
 DebugMessage debug_msg;
 Controller controller_msg;
+Controller controller_pub_msg;
 MovementFeedback movement_feedback_msg;
 
 void callbackUserAction(const robocon2022_essentials_msgs::UserAction& userAction)
@@ -46,6 +49,9 @@ void callbackUserAction(const robocon2022_essentials_msgs::UserAction& userActio
 
 void callbackController(const robocon2022_essentials_msgs::Controller& msg)
 {
+  //  emergecy stop
+  controller_msg.data.emergency_switch = msg.emergency_switch;
+
   controller_msg.data.movement_mode = (int8_t)msg.movement_mode;
   controller_msg.data.movement.x = msg.movement_vel.linear.x;
   controller_msg.data.movement.y = msg.movement_vel.linear.y;
@@ -69,6 +75,8 @@ int main(int argc, char** argv)
   serial.add_frame(CONTROLLER_ID, &controller_msg);
   serial.add_frame(MOVEMENT_FEEDBACK_ID, &movement_feedback_msg);
   serial.add_frame(DEBUG_ID, &debug_msg);
+  serial.add_frame(CONTROLLER_PUB_ID, &controller_pub_msg);
+
 
   //  subscriber
   ros::Subscriber user_action_sub_ = nh.subscribe("/essentials_detection/user_action", 10, callbackUserAction);
@@ -76,6 +84,8 @@ int main(int argc, char** argv)
   //  Publisher
   ros::Publisher debug_pub = nh.advertise<std_msgs::String>("/essentials_serial/debug", 1000);
   ros::Publisher movenet_feedback_pub = nh.advertise<robocon2022_essentials_msgs::Wheel4>("/essentials_serial/feedback", 1000);
+  ros::Publisher controller_pub = nh.advertise<robocon2022_essentials_msgs::Controller>("/essentials_serial/controller_pub", 1000);
+
 
   while(ros::ok())
   {
@@ -102,6 +112,23 @@ int main(int argc, char** argv)
         msg.present.v4 = movement_feedback_msg.data.output.v4;
 
         movenet_feedback_pub.publish(msg);
+      }
+
+      if(controller_pub_msg.was_updated())
+      {
+        robocon2022_essentials_msgs::Controller msg;
+
+        msg.emergency_switch = controller_pub_msg.data.emergency_switch;
+        msg.movement_mode = controller_pub_msg.data.movement_mode;
+        msg.movement_vel.linear.x = controller_pub_msg.data.movement.x;
+        msg.movement_vel.linear.y = controller_pub_msg.data.movement.y;
+        msg.movement_vel.angular.z = controller_pub_msg.data.movement.z;
+        msg.all_reload = controller_pub_msg.data.all_reload;
+        msg.shooter_num = controller_pub_msg.data.shooter.num;
+        msg.shooter_power = controller_pub_msg.data.shooter.power;
+        msg.shooter_action = controller_pub_msg.data.shooter.action;
+
+        controller_pub.publish(msg);
       }
     }
 
