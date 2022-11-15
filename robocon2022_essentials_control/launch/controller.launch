@@ -9,6 +9,10 @@
   <!-- Controller -->
   <node name="essentials_controller" pkg="robocon2022_essentials_controller" type="controller" output="screen"/>
 
+  <!-- Emergency -->
+  <node name="essentials_controller_emergency" pkg="robocon2022_essentials_controller" type="emergency" output="screen"/>
+
+
   <!-- Visualizer -->
   <node name="essentials_controller_visualizer" pkg="robocon2022_essentials_visualizer" type="controller_visualizer" output="screen"/>
 
