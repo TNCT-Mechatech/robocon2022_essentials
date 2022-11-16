@@ -13,6 +13,7 @@
 #include <robocon2022_essentials_msgs/UserAction.h>
 #include <robocon2022_essentials_msgs/Controller.h>
 #include <robocon2022_essentials_msgs/Wheel4.h>
+#include <robocon2022_essentials_msgs/PIDGain.h>
 
 //  SerialBridge
 #include <SerialBridge.hpp>
@@ -22,11 +23,13 @@
 #include "./Controller.hpp"
 #include "./MovementFeedback.hpp"
 #include "./DebugMessage.h"
+#include "./PIDGain.hpp"
 
 #define SERIAL_PATH "/dev/serial/by-path/pci-0000:00:14.0-usb-0:4:1.2"
 
 #define CONTROLLER_ID 0
 #define GESTURE_ID 1
+#define PID_GAIN_ID 2
 #define MOVEMENT_FEEDBACK_ID 5
 #define DEBUG_ID 6
 #define CONTROLLER_PUB_ID 7
@@ -40,6 +43,7 @@ DebugMessage debug_msg;
 Controller controller_msg;
 Controller controller_pub_msg;
 MovementFeedback movement_feedback_msg;
+PIDGain pid_gain_msg;
 
 void callbackUserAction(const robocon2022_essentials_msgs::UserAction& userAction)
 {
@@ -64,6 +68,19 @@ void callbackController(const robocon2022_essentials_msgs::Controller& msg)
   serial.write(CONTROLLER_ID);
 }
 
+void callbackPIDGain(const robocon2022_essentials_msgs::PIDGain& msg)
+{
+  for(int i = 0; i < 4; i++)
+  {
+    pid_gain_msg.data.gains[i].kp = msg.gains[i].kp;
+    pid_gain_msg.data.gains[i].ki = msg.gains[i].ki;
+    pid_gain_msg.data.gains[i].kd = msg.gains[i].kd;
+    pid_gain_msg.data.gains[i].fg = msg.gains[i].fg;
+  }
+
+  serial.write(PID_GAIN_ID);
+}
+
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "robocon2022_essentials_serial");
@@ -76,11 +93,13 @@ int main(int argc, char** argv)
   serial.add_frame(MOVEMENT_FEEDBACK_ID, &movement_feedback_msg);
   serial.add_frame(DEBUG_ID, &debug_msg);
   serial.add_frame(CONTROLLER_PUB_ID, &controller_pub_msg);
+  serial.add_frame(PID_GAIN_ID, &pid_gain_msg);
 
 
   //  subscriber
   ros::Subscriber user_action_sub_ = nh.subscribe("/essentials_detection/user_action", 10, callbackUserAction);
   ros::Subscriber controller_sub_ = nh.subscribe("/essentials_controller/controller", 10, callbackController);
+  ros::Subscriber pid_gain_sub_ = nh.subscribe("/essentials_movement/pid_gain", 10, callbackPIDGain);
   //  Publisher
   ros::Publisher debug_pub = nh.advertise<std_msgs::String>("/essentials_serial/debug", 1000);
   ros::Publisher movenet_feedback_pub = nh.advertise<robocon2022_essentials_msgs::Wheel4>("/essentials_serial/feedback", 1000);

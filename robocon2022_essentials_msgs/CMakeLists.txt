@@ -20,6 +20,8 @@ add_message_files(
   Vector4.msg
   Wheel4.msg
   EmeregencyStop.msg
+  Gain.msg
+  PIDGain.msg
 )
 
 ## Generate added messages and services with any dependencies listed here
