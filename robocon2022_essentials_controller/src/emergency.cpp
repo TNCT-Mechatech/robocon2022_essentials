@@ -5,7 +5,7 @@
 
 #include <wiringPi.h>
 
-#define PIN 15
+#define PIN 7
 #endif
 
 int main(int argc, char** argv)
@@ -20,7 +20,6 @@ int main(int argc, char** argv)
 
   wiringPiSetup();
   pinMode(PIN, INPUT);
-  pullUpDnControl(PIN, PUD_DOWN);
 
   while(ros::ok())
   {
