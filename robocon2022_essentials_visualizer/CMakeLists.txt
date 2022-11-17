@@ -59,3 +59,9 @@ target_link_libraries(controller_visualizer
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )
+
+add_executable(panel_visualizer src/panel_visualizer.cpp)
+target_link_libraries(panel_visualizer
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
