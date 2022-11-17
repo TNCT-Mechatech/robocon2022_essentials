@@ -88,11 +88,11 @@ public:
     cv::Scalar red_color = cv::Scalar(255, 0, 0);
 
     //  status
-    std::string status_str = std::string("Status: ") + (msg.emergency_switch ? std::string("Active") : std::string("Stopped"));
+    std::string status_str = std::string("Status: ") + (controller_msg.emergency_switch ? std::string("Active") : std::string("Stopped"));
     put_text(
       image,
       status_str,
-      msg.emergency_switch ? green_color : red_color,
+      controller_msg.emergency_switch ? green_color : red_color,
       1
     );
 
