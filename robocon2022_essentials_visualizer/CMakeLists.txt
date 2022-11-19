@@ -65,3 +65,9 @@ target_link_libraries(panel_visualizer
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )
+
+add_executable(pid_debug_visualizer src/pid_debug.cpp)
+target_link_libraries(pid_debug_visualizer
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)

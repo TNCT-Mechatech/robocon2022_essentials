@@ -85,7 +85,7 @@ public:
     //  color
     cv::Scalar black_color = cv::Scalar(0, 0, 0);
     cv::Scalar green_color = cv::Scalar(0, 255, 0);
-    cv::Scalar red_color = cv::Scalar(255, 0, 0);
+    cv::Scalar red_color = cv::Scalar(218, 0, 0);
 
     //  status
     std::string status_str = std::string("Status: ") + (controller_msg.emergency_switch ? std::string("Active") : std::string("Stopped"));
