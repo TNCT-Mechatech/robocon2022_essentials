@@ -23,3 +23,6 @@ int32 shooter_action
 # ALL shooter reload
 bool all_reload
 
+###########################
+# Face
+int32 face

@@ -14,6 +14,8 @@ typedef struct ControllerType
     //  shooter variable
     bool all_reload;
     shooter_t shooter;
+    //  face
+    int8_t face;
 } controller_t;
 
 //  create message

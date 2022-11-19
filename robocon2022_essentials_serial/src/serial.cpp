@@ -32,7 +32,7 @@
 #define PID_GAIN_ID 2
 #define MOVEMENT_FEEDBACK_ID 5
 #define DEBUG_ID 6
-#define CONTROLLER_PUB_ID 7
+#define UPSTREAM_CONTROLLER_ID 7
 
 
 SerialDev *dev = new LinuxHardwareSerial(SERIAL_PATH, B115200);
@@ -64,6 +64,7 @@ void callbackController(const robocon2022_essentials_msgs::Controller& msg)
   controller_msg.data.shooter.num = (int8_t)msg.shooter_num;
   controller_msg.data.shooter.power = msg.shooter_power;
   controller_msg.data.shooter.action = (int8_t)msg.shooter_action;
+  controller_msg.data.face = (int8_t)msg.face;
 
   serial.write(CONTROLLER_ID);
 }
@@ -92,7 +93,7 @@ int main(int argc, char** argv)
   serial.add_frame(CONTROLLER_ID, &controller_msg);
   serial.add_frame(MOVEMENT_FEEDBACK_ID, &movement_feedback_msg);
   serial.add_frame(DEBUG_ID, &debug_msg);
-  serial.add_frame(CONTROLLER_PUB_ID, &controller_pub_msg);
+  serial.add_frame(UPSTREAM_CONTROLLER_ID, &controller_pub_msg);
   serial.add_frame(PID_GAIN_ID, &pid_gain_msg);
 
 
@@ -146,6 +147,7 @@ int main(int argc, char** argv)
         msg.shooter_num = controller_pub_msg.data.shooter.num;
         msg.shooter_power = controller_pub_msg.data.shooter.power;
         msg.shooter_action = controller_pub_msg.data.shooter.action;
+        msg.face = controller_pub_msg.data.face;
 
         controller_pub.publish(msg);
       }

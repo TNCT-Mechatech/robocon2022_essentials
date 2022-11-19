@@ -16,6 +16,8 @@
 #define MATRIX_COL 1920
 #define MATRIX_ROW 1080
 
+#define UPSTREAM_CONTROLLER_TIMEOUT 2.0
+
 using robocon2022_essentials_msgs::Controller;
 
 template <typename ... Args>
@@ -37,12 +39,15 @@ public:
     ros::NodeHandle pnh("~");
     ros::Rate loop_rate(20);
 
-    //  gain subscriber
-    ros::Subscriber gain_sub_ = pnh.subscribe("/essentials_controller/controller", 10, &panel_visualizer_node::callback_controller, this);
+    //  subscriber
+    ros::Subscriber controller_sub_ = pnh.subscribe("/essentials_controller/controller", 10, &panel_visualizer_node::callback_controller, this);
+    ros::Subscriber sub_controller_sub_ = pnh.subscribe("/essentials_serial/controller_pub", 10, &panel_visualizer_node::callback_sub_controller, this);
 
     //  publisher
     image_transport::ImageTransport it(pnh);
     image_pub_ = it.advertise("/essentials_panel_visualizer/color/image/", 10);
+
+    last_rx_upstream = ros::Time::now().toSec();
 
     while(ros::ok())
     {
@@ -65,9 +70,18 @@ public:
     controller_msg = msg;
   }
 
+  void callback_sub_controller(const Controller& msg)
+  {
+    sub_controller_msg = msg;
+    last_rx_upstream = ros::Time::now().toSec();
+  }
+
   //  drawing
   void drawing_frame()
   {
+    //  controller
+    Controller controller = ros::Time::now().toSec() - last_rx_upstream > UPSTREAM_CONTROLLER_TIMEOUT ? controller_msg : sub_controller_msg;
+
     /**
      * Note: Mat's notation is not (x,y), but (row,col). 
      * O    row
@@ -88,25 +102,25 @@ public:
     cv::Scalar red_color = cv::Scalar(218, 0, 0);
 
     //  status
-    std::string status_str = std::string("Status: ") + (controller_msg.emergency_switch ? std::string("Active") : std::string("Stopped"));
+    std::string status_str = std::string("Status: ") + (controller.emergency_switch ? std::string("Active") : std::string("Stopped"));
     put_text(
       image,
       status_str,
-      controller_msg.emergency_switch ? green_color : red_color,
+      controller.emergency_switch ? green_color : red_color,
       1
     );
 
     //  Movement mode
     std::string mode_str("Mode: ");
-    if (controller_msg.movement_mode == 0)
+    if (controller.movement_mode == 0)
     {
       mode_str += std::string("Fast");
     }
-    else if (controller_msg.movement_mode == 1)
+    else if (controller.movement_mode == 1)
     {
       mode_str += std::string("Normal");
     }
-    else if (controller_msg.movement_mode == 2)
+    else if (controller.movement_mode == 2)
     {
       mode_str += std::string("Slow");
     }
@@ -122,19 +136,19 @@ public:
     //  Movement
     put_text(
       image,
-      format("X:%5d%", (int)(controller_msg.movement_vel.linear.x * 100)),
+      format("X:%5d%", (int)(controller.movement_vel.linear.x * 100)),
       black_color,
       2
     );
     put_text(
       image,
-      format("Y:%5d%", (int)(controller_msg.movement_vel.linear.y * 100)),
+      format("Y:%5d%", (int)(controller.movement_vel.linear.y * 100)),
       black_color,
       3
     );
     put_text(
       image,
-      format("Z:%5d%", (int)(controller_msg.movement_vel.angular.z * 100)),
+      format("Z:%5d%", (int)(controller.movement_vel.angular.z * 100)),
       black_color,
       4
     );
@@ -142,15 +156,15 @@ public:
 
     //  Shooter
     std::string shooter_selected("Shooter: ");
-    if(controller_msg.shooter_num == 0)
+    if(controller.shooter_num == 0)
     {
       shooter_selected += std::string("Child");
     }
-    else if(controller_msg.shooter_num == 1)
+    else if(controller.shooter_num == 1)
     {
       shooter_selected += std::string("Parent RIGHT");
     }
-    else if(controller_msg.shooter_num == 2)
+    else if(controller.shooter_num == 2)
     {
       shooter_selected += std::string("Parent LEFT");
     }
@@ -163,22 +177,22 @@ public:
     );
     put_text(
       image,
-      format("Power:%5.1lf%", controller_msg.shooter_power * 100),
+      format("Power:%5.1lf%", controller.shooter_power * 100),
       black_color,
       5
     );
 
     //  Shooter state
     std::string shooter_state_str("Status: ");
-    if (controller_msg.shooter_action == 1)
+    if (controller.shooter_action == 1)
     {
       shooter_state_str += std::string("UP");
     }
-    else if (controller_msg.shooter_action == 2)
+    else if (controller.shooter_action == 2)
     {
       shooter_state_str += std::string("DOWN");
     }
-    else if (controller_msg.shooter_action == 3)
+    else if (controller.shooter_action == 3)
     {
       shooter_state_str += std::string("SHOOT!!");
     }
@@ -190,7 +204,7 @@ public:
       6
     );
 
-    if(controller_msg.all_reload)
+    if(controller.all_reload)
     {
       put_text(
         image,
@@ -224,6 +238,8 @@ private:
   image_transport::Publisher image_pub_;
 
   Controller controller_msg;
+  Controller sub_controller_msg;
+  double last_rx_upstream;
 };
 
 

@@ -127,6 +127,16 @@ public:
       controller_msg.shooter_power = power < 0.0 ? 0.0: power;
     }
 
+    /**
+     * @brief Left cross LEFT key: change emotion
+     */
+    if(!_previous_controller.lc_left && _present_controller.lc_left) {
+      int mode = controller_msg.face + 1;
+
+      //  limitter
+      controller_msg.face = mode >= 2 ? 0: mode;
+    }
+
     /////////////////////////////
     //  Right cross key part
     /**
