@@ -134,7 +134,7 @@ public:
       int mode = controller_msg.face + 1;
 
       //  limitter
-      controller_msg.face = mode >= 2 ? 0: mode;
+      controller_msg.face = mode >= 4 ? 1: mode;
     }
 
     /////////////////////////////
