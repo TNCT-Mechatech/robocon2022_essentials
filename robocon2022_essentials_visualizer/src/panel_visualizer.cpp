@@ -182,6 +182,27 @@ public:
       5
     );
 
+    //  Face state
+    std::string face_str("Face: ");
+    if (controller.face == 1)
+    {
+      face_str += std::string("Normal :)");
+    }
+    else if (controller.face == 2)
+    {
+      face_str += std::string("Funny :D");
+    }
+    else if (controller.face == 3)
+    {
+      face_str += std::string("Sadly :(");
+    }
+    put_text(
+      image,
+      face_str,
+      black_color,
+      6
+    );
+
     //  Shooter state
     std::string shooter_state_str("Status: ");
     if (controller.shooter_action == 1)
@@ -201,7 +222,7 @@ public:
       image,
       shooter_state_str,
       black_color,
-      6
+      7
     );
 
     if(controller.all_reload)
@@ -210,7 +231,7 @@ public:
         image,
         std::string("All reload!"),
         black_color,
-        7
+        8
       );
     }
     
