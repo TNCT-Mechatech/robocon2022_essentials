@@ -132,28 +132,6 @@ public:
       3
     );
 
-    /*
-    //  Movement
-    put_text(
-      image,
-      format("X:%5d%", (int)(controller.movement_vel.linear.x * 100)),
-      black_color,
-      2
-    );
-    put_text(
-      image,
-      format("Y:%5d%", (int)(controller.movement_vel.linear.y * 100)),
-      black_color,
-      3
-    );
-    put_text(
-      image,
-      format("Z:%5d%", (int)(controller.movement_vel.angular.z * 100)),
-      black_color,
-      4
-    );
-    */
-
     //  Shooter
     std::string shooter_selected("Shooter: ");
     if(controller.shooter_num == 0)
