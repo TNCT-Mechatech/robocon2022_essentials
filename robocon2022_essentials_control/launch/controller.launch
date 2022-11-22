@@ -1,5 +1,5 @@
 <launch>
-  <arg name="view" default="true" />
+  <arg name="view" default="false" />
 
   <!-- Dualshock 4 -->
   <node name="$(anon essentials_controller_joy)" pkg="joy" type="joy_node" output="screen">
@@ -12,16 +12,13 @@
   <!-- Emergency -->
   <node name="$(anon essentials_controller_emergency)" pkg="robocon2022_essentials_controller" type="emergency" output="screen"/>
 
-
-  <!-- Visualizer -->
-  <node name="$(anon essentials_controller_visualizer)" pkg="robocon2022_essentials_visualizer" type="controller_visualizer" output="screen"/>
-
   <group if="$(arg view)" >
     <!-- image view -->
     <node name="$(anon controller_image_view)" pkg="image_view" type="image_view" output="screen" ns="controller_image_view" >
       <remap from="image" to="/essentials_controller_visualizer/color/image/" />
-      
-      <!-- <param name="autosize" value="true"/> -->
     </node>
+
+    <!-- Visualizer -->
+    <node name="$(anon essentials_controller_visualizer)" pkg="robocon2022_essentials_visualizer" type="controller_visualizer" output="screen"/>
   </group>
 </launch>
