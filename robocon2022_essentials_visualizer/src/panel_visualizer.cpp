@@ -98,8 +98,10 @@ public:
 
     //  color
     cv::Scalar black_color = cv::Scalar(0, 0, 0);
-    cv::Scalar green_color = cv::Scalar(0, 255, 0);
-    cv::Scalar red_color = cv::Scalar(218, 0, 0);
+    cv::Scalar green_color = cv::Scalar(0, 191, 0);
+    cv::Scalar red_color = cv::Scalar(0, 0, 218);
+    cv::Scalar orange_color = cv::Scalar(0, 165, 255);
+    cv::Scalar blue_color = cv::Scalar(255, 102, 0);
 
     //  status
     std::string status_str = std::string("Status: ") + (controller.emergency_switch ? std::string("Active") : std::string("Stopped"));
@@ -111,24 +113,28 @@ public:
     );
 
     //  Movement mode
+    cv::Scalar mode_color = black_color;
     std::string mode_str("Mode: ");
     if (controller.movement_mode == 0)
     {
       mode_str += std::string("Fast");
+      mode_color = red_color;
     }
     else if (controller.movement_mode == 1)
     {
       mode_str += std::string("Normal");
+      mode_color = orange_color;
     }
     else if (controller.movement_mode == 2)
     {
       mode_str += std::string("Slow");
+      mode_color = blue_color;
     }
     
     put_text(
       image,
       mode_str,
-      black_color,
+      mode_color,
       3
     );
 
@@ -140,11 +146,11 @@ public:
     }
     else if(controller.shooter_num == 1)
     {
-      shooter_selected += std::string("Parent RIGHT");
+      shooter_selected += std::string("--Parent RIGHT-->>");
     }
     else if(controller.shooter_num == 2)
     {
-      shooter_selected += std::string("Parent LEFT");
+      shooter_selected += std::string("<<--Parent LEFT--");
     }
 
     put_text(
@@ -229,7 +235,8 @@ public:
       cv::FONT_HERSHEY_PLAIN,
       7,
       color,
-      4
+      10,
+      cv::LINE_AA
     );
   }
 private:
