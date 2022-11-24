@@ -146,11 +146,11 @@ public:
     }
     else if(controller.shooter_num == 1)
     {
-      shooter_selected += std::string("--Parent RIGHT-->>");
+      shooter_selected += std::string("Parent RIGHT-->>");
     }
     else if(controller.shooter_num == 2)
     {
-      shooter_selected += std::string("<<--Parent LEFT--");
+      shooter_selected += std::string("<<--Parent LEFT");
     }
 
     put_text(
